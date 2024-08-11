@@ -46,6 +46,7 @@ full_directory_structure = get_full_directory_structure(data)
 # full_directory_structure_json = json.dumps(
 #     full_directory_structure, indent=4, ensure_ascii=False
 # )
+# print(full_directory_structure['ut-kareum']['attraction'])
 print(full_directory_structure)
 
 # print(full_directory_structure_json)
