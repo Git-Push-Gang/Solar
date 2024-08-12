@@ -1,5 +1,6 @@
-import os
 import csv
+import os
+
 from docx import Document
 
 
@@ -60,15 +61,3 @@ def save_to_csv(data, csv_file_path):
                         'location_description': location_info['location_description']
                     }
                     writer.writerow(row)
-
-
-# Example usage
-base_path = 'kareumstay'
-csv_file_path = 'data/locations.csv'
-
-data = build_data_structure(base_path)
-print(data['al-kareum']['stay'][0])
-
-save_to_csv(data, csv_file_path)
-
-print(f"Data has been saved to {csv_file_path}.")

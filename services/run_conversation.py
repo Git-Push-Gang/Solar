@@ -1,14 +1,27 @@
 import json
 import os
+import sys
 
 import dotenv
-from openai import OpenAI  # openai==1.2.0
+import pandas as pd
+from openai import OpenAI
+
+from services.tools.init_fuctions import initialize_functions
 
 dotenv.load_dotenv()
 client = OpenAI(api_key=os.getenv("API_KEY"), base_url="https://api.upstage.ai/v1/solar")
 
-from tools.function_calls import functions as FUNCTIONS
-from tools.function_calls import function_descriptions as FUNCTION_DESCRIPTIONS
+project_root = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(project_root)
+
+init_data = pd.read_csv("../data/locations.csv")
+
+functions_module_dir = 'tools/functions'
+functions_module_names = [f.replace('.py', '') for f in os.listdir(functions_module_dir) if f.endswith('.py')]
+print(f'module_names: {functions_module_names}')
+
+FUNCTIONS, FUNCTION_DESCRIPTIONS = initialize_functions(functions_module_names, functions_module_dir)
+print(f'FUNCTIONS: {FUNCTIONS}')
 
 
 def run_conversation(message):
@@ -36,9 +49,10 @@ def run_conversation(message):
             function_name = tool_call.function.name
             function_to_call = FUNCTIONS[function_name]
             function_args = json.loads(tool_call.function.arguments)
+            print(f"function_args: {function_args}")
             function_response = function_to_call(
-                location=function_args.get("location"),
-                unit=function_args.get("unit"),
+                region_name=function_args.get("region_name"),
+                data=init_data
             )
             messages.append(
                 {
@@ -55,4 +69,4 @@ def run_conversation(message):
         )
 
 
-print(run_conversation("Hi, Please recommend a place to eat near east-kareum"))
+print(run_conversation("Hi, Please recommend a place to drink near east-kareum"))
