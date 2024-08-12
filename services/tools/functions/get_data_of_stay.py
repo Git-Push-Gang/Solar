@@ -1,37 +1,41 @@
 import json
 import numpy
-import data
-
+import pandas as pd
 # In production, this could be your backend API or an external API
-def get_data_of_stay(region_id, category_id, stay_id):
+def get_data_of_stay(region_name, location_id):
     """Get stay data"""
-    return data[region_id][category_id][stay_id]
+    data = pd.read_csv("Git-Push-Gang/Solar/data/locations.csv")
+    # 조건에 맞는 데이터 필터링
+    category_name="stay"
+    filtered_data = data[(data['region_name'] == region_name) & (data['category_name'] == category_name) & (data['location_id'] == location_id)]
+    # 필터링된 데이터가 존재하는지 확인
+    if filtered_data.empty:
+        return f"No data found for region '{region_name}' and category '{category_name}'"
+    return filtered_data["location_description"]
 
 description = {
         "type": "function",
         "function": {
             "name": "get_data_of_stay",
-            "description": "Use region_id, category_id, and stay_id to retrieve the complete data of stay.",
+            "description": "Use region_name, category_name, and stay_id to retrieve the complete data of stay.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "region_id": {
+                    "region_name": {
                         "type": "string",
-                        "description": "Region name e.g. 동카름, 서카름",
+                        "description": "Region name e.g. east-kareum, al-kareum",
                     },
-                    "category_id": {
-                        "type": "string",
-                        "description": "Category name e.g. attraction, restuarant",
-                    },
-                    "stay_id": {
+                    "location_id": {
                         "type": "int",
                         "description": "Id of stay e.g. 0, 1, 2",
                     },
                 },
-                "required": ["region_id", "category_id", "stay_id"],
+                "required": ["region_name", "location_id"],
             },
         },
     }
+
+
 # data['region_id']['category_id']['location_id']
 # data['est_karuem']['attraction']['녹산로']
 

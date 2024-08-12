@@ -1,31 +1,42 @@
 import json
 import random
-import data
-def get_data_of_random_landmark(region_id, number=3):
-    upper_limit = len(data[ragion_id][category_id]) - 1
-    whole_text = 0
+import pandas as pd
+def get_data_of_random_entertainment(region_name, number=3):
+    data = pd.read_csv("Git-Push-Gang/Solar/data/locations.csv")
+    category_name="entertainment"
+    filtered_data = data[(data['region_name'] == region_name) & (data['category_name'] == category_name)]
+
+    # 필터링된 데이터가 존재하는지 확인
+    if filtered_data.empty:
+        return f"No data found for region '{region_name}' and category '{category_name}'"
+    # number 값을 filtered_data의 길이로 제한
+    number = min(number, len(filtered_data))
+
+    whole_text = ""
+    upper_limit = len(filtered_data) - 1
     for i in range(number):
-        whlole_text += data[region_id]["restuarant"][random.randint(0, upper_limit)]
+        whole_text += filtered_data.iloc[random.randint(0, upper_limit)]["location_description"]
+        
     return whole_text
 
 description = {
         "type": "function",
         "function": {
-            "name": "get_data_random_landmark",
-            "description": "Use region_id, category_id, and number to retrieve the complete data of 3 random landmarks.",
+            "name": "get_data_random_entertainment",
+            "description": "Use region_name, category_name, and number to retrieve the complete data of 3 random entertainment.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "region_id": {
+                    "region_name": {
                         "type": "string",
-                        "description": "Region name e.g. 동카름, 서카름",
+                        "description": "Region name e.g. al-kareum, west-kareum",
                     },
                     "number": {
                         "type": "int",
-                        "description": "The number of landmarks to get information e.g. 2, 3",
+                        "description": "The number of entertainment to get information e.g. 2, 3",
                     },
                 },
-                "required": ["region_id", "category_id", "number"],
+                "required": ["region_name", "number"],
             },
         },
     }
